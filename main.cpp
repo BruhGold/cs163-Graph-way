@@ -48,7 +48,7 @@ int main()
 void insertWord(wstring a,vector<wstring> &edges,vector<set*> &graph,wstring def)
 {
 	set* cur;
-	int loc=0;
+	int loc=0,curloc=0;
 	while (loc<graph.size())
 	{
 		cur=graph[loc];
@@ -57,12 +57,14 @@ void insertWord(wstring a,vector<wstring> &edges,vector<set*> &graph,wstring def
 			loc=cur->pnext->num;
 			if (edges[loc][0]==a[0])
 			{
+				wstring newA;
 				int k=0;
 				for (k;k<edges[loc].size();k++)
 				{
 					if (edges[loc][k]!=a[k])
 					{
 						set *tmp=new set;
+						def=L"$"+def;
 						cur->pnext->num=graph.size();
 						split(edges,graph,loc,k,a);
 						tmp->num=graph.size();
@@ -73,15 +75,25 @@ void insertWord(wstring a,vector<wstring> &edges,vector<set*> &graph,wstring def
 						return;
 					}
 				}
+				for (k=edges[loc].size();k<a.size();k++)
+				{
+					newA+=a[k];
+				}
+				curloc=loc;
+				a=newA;
+				cur=graph[loc];
 			}
-			else cur=cur->pnext;
+			else 
+			{
+				cur=cur->pnext;
+			}
 		}
 		if (!cur->pnext)
 		{
 			set* tmp=new set;
 			tmp->num=graph.size();
-			tmp->pnext=graph[loc]->pnext;
-			graph[loc]->pnext=tmp;
+			tmp->pnext=graph[curloc]->pnext;
+			graph[curloc]->pnext=tmp;
 			tmp=new set;
 			tmp->num=graph.size();
 			tmp->pnext=new set;
@@ -101,7 +113,6 @@ void insertWord(wstring a,vector<wstring> &edges,vector<set*> &graph,wstring def
 void split(vector<wstring> &edges,vector<set*> &graph,int loc,int k,wstring a)
 {
 	set* tmp;
-	a+=L"$";
 	wstring new1,new2,newa;
 	for (int i=0;i<k;i++)
 	{
@@ -118,15 +129,13 @@ void split(vector<wstring> &edges,vector<set*> &graph,int loc,int k,wstring a)
 	if (new2.size()>0)
 	{
 		edges[loc]=new2;
-		tmp=new set;
-		tmp->num=graph.size()+1;
-		tmp->pnext=graph[loc]->pnext;
-		graph[loc]->pnext=tmp;
 		edges.push_back(new1);
 		tmp=new set;
 		tmp->num=graph.size();
 		tmp->pnext=new set;
 		tmp->pnext->num=loc;
+		tmp->pnext->pnext=new set;
+		tmp->pnext->pnext->num=graph.size()+1;
 		graph.push_back(tmp);
 		edges.push_back(newa);
 		tmp=new set;
