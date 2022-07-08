@@ -1,0 +1,17 @@
+8
+
+0 3 5 
+e
+1 2 
+$ok
+2 
+heloo
+3 4 
+$kspd
+4 
+fin
+5 1 6 
+lland
+6 7 
+$kssssssss
+7 
