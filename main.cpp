@@ -27,6 +27,7 @@ void printAll(vector<wstring> edges,vector<set*> graph,int loc,wstring arr);
 void delAll(vector<set*> &graph);
 bool search(vector<wstring> edges,vector<set*> graph,vector<wstring> &favourite,wstring keyword);
 void displayHistory(queue<wstring> history);
+bool changeDef(wstring keyword,vector<wstring> &edges,vector<set*> &graph,wstring new_def);
 
 int main()
 {
@@ -71,6 +72,7 @@ int main()
 		wcout<<L"1.insert new word"<<endl;
 		wcout<<L"2.search for a keyword"<<endl;
 		wcout<<L"3.search history"<<endl;
+		wcout<<L"4.change defintion"<<endl;
 		
 		while (!(wcin>>option)) 
 		{
@@ -110,10 +112,10 @@ int main()
 			if (search(edges,graph,favourite,a)==false) 
 			{
 				wcout<<L"cannot find the keyword"<<endl;
+				wcout<<L"press any key and 'enter' to continue"<<endl;
+				wcin.ignore(10,'\n');
+				getline(std::wcin,a);
 			}
-			wcout<<L"press any key and 'enter' to continue"<<endl;
-			wcin.ignore(10,'\n');
-			getline(std::wcin,a);
 		}
 		else if (option==3)
 		{
@@ -121,6 +123,23 @@ int main()
 			displayHistory(history);
 			wcout<<L"press any key and 'enter' to continue"<<endl;
 			wcin.ignore(1,'\n');
+			wcin.ignore(10,'\n');
+			getline(std::wcin,a);
+		}
+		else if (option==4)
+		{
+			wcout<<L"  word     : ";
+			wcin.ignore(10,'\n');
+			wcin.ignore(10,'\n');
+			getline(std::wcin,a);
+			wcout<<L"  new def  : ";
+			wcin.ignore(10,'\n');
+			getline(std::wcin,def);
+			if (changeDef(a,edges,graph,def)==false); 
+			{
+				wcout<<L"cannot find the keyword"<<endl;
+			}
+			wcout<<L"press any key and 'enter' to continue"<<endl;
 			wcin.ignore(10,'\n');
 			getline(std::wcin,a);
 		}
@@ -148,6 +167,30 @@ int main()
 		}
 	}
 	delAll(graph);
+}
+
+bool changeDef(wstring keyword,vector<wstring> &edges,vector<set*> &graph,wstring new_def)
+{
+	int t=0;
+	set* cur=graph[0]->pnext;
+	while (cur)
+	{
+		if (edges[cur->num][0]==keyword[t])
+		{
+			for (int i=0;i<edges[cur->num].size();i++)
+			{
+				if (i+t==keyword.size() || edges[cur->num][i]!=keyword[i+t]) return false;
+			}
+			t+=edges[cur->num].size();
+			cur=graph[cur->num];
+			if (t==keyword.size())
+			{
+				edges[cur->num+1]=L"$"+new_def;
+				return true;
+			}
+		}
+		else cur=cur->pnext;
+	}
 }
 
 bool getF(wstring file_name,vector<wstring> &edges,vector<set*> &graph)
@@ -243,6 +286,8 @@ bool search(vector<wstring> edges,vector<set*> graph,vector<wstring> &favourite,
 				wcout<<L"definition:";
 				for (int i=1;i<edges[cur->num+1].size();i++) wcout<<edges[cur->num+1][i];
 				wcout<<endl<<L"add word to favourite list? (0-no,1-yes)"<<endl;
+				wcin.ignore(1,'\n');
+				wcin.ignore(1,'\n');
 				while (!wcin>>t)
 				{
 					wcin.clear();
